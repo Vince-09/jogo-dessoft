@@ -51,7 +51,7 @@ class Raposa(pygame.sprite.Sprite):
         for bloco in pygame.sprite.spritecollide(self, blocos, False):
             if self.vx > 0:
                 self.rect.right = bloco.rect.left
-            elif self.vy < 0:
+            elif self.vx < 0:
                 self.rect.left = bloco.rect.right
 
 
