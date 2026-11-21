@@ -12,7 +12,7 @@ class Bloco(pygame.sprite.Sprite):
 
 from config import (GRAVIDADE, VEL_MAX_QUEDA, VEL_PULO, VEL_ANDAR, VEL_AGACHADO)
 
-class Raposa(pygame.sprite.Sprite)
+class Raposa(pygame.sprite.Sprite):
     LARGURA_HITBOX = 34
     ALTURA_EM_PE = 52
     ALTURA_AGACHADA = 28
