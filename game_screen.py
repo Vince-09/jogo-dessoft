@@ -1,7 +1,7 @@
 import pygame
-from config import FPS, LARGURA
+from config import FPS, LARGURA, PONTOS_MOEDA, PONTOS_INIMIGO, PONTOS_PROVAS
 from fases import FASES, construir_fase
-from sprites import Raposa
+from sprites import Raposa, PilhaDeProvas, Inimigo
 from camera import Camera
 
 
@@ -19,6 +19,7 @@ def game_screen(janela, assets):
      grupos["cortes"] = pygame.sprite.Group()
      raposa = Raposa(assets, inicio[0], inicio[1])
      camera = Camera(largura_fase)
+     pontos = 0
 
      while True: 
         relogio.tick(FPS) 
@@ -32,10 +33,30 @@ def game_screen(janela, assets):
                 if evento.key in [pygame.K_x, pygame.K_k, pygame.K_c]:
                     raposa.cortar(grupos)
 
-
         raposa.ler_teclado(pygame.key.get_pressed())
         raposa.update(grupos['blocos'])
+        grupos['todos'].update()                 
         grupos["cortes"].update()
+
+        acertos = pygame.sprite.groupcollide(grupos['cortes'], grupos['cortaveis'], False, True)
+        for alvos in acertos.values():
+            for alvo in alvos:
+                if isinstance(alvo, PilhaDeProvas):
+                    pontos += PONTOS_PROVAS
+                elif isinstance(alvo, Inimigo):
+                    pontos += PONTOS_INIMIGO
+
+        #pular em cima do jacaré (como no Mario Bros)
+        for inimigo in pygame.sprite.spritecollide(raposa, grupos['inimigos'], False):
+            if raposa.vy > 0 and raposa.rect.bottom - inimigo.rect.top < 20:
+                inimigo.kill()
+                raposa.vy = -10  # quicada
+                pontos += PONTOS_INIMIGO
+
+        moedas_pegas = pygame.sprite.spritecollide(raposa, grupos['moedas'], True)
+        if len(moedas_pegas) > 0:
+            pontos += PONTOS_MOEDA * len(moedas_pegas)
+
         camera.seguir(raposa)
 
         desenhar_cenario(janela, assets, camera) 

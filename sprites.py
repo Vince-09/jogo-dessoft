@@ -1,6 +1,6 @@
 """Classes de todos os objetos do jogo (sprites)."""
 import pygame
-from config import (GRAVIDADE, INTERVALO_CORTE, VEL_MAX_QUEDA, VEL_PULO, VEL_ANDAR, VEL_AGACHADO, DURACAO_CORTE)
+from config import (GRAVIDADE, INTERVALO_CORTE, TEMPO_FRAME, VEL_MAX_QUEDA, VEL_PULO, VEL_ANDAR, VEL_AGACHADO, DURACAO_CORTE)
 
 class Bloco(pygame.sprite.Sprite):
      """Um quadradinho sólido do cenário (chão ou plataforma)."""
@@ -10,6 +10,82 @@ class Bloco(pygame.sprite.Sprite):
          self.rect = self.image.get_rect()
          self.rect.x = x
          self.rect.y = y
+
+
+class Obstaculo(pygame.sprite.Sprite):
+    "obstaculo parado que tira vida (espinho ou galho). (x,y) é o ponto midbottom do obstaculo"
+
+    def __init__(self, imagem, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = imagem
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = (x, y)
+
+class PilhaDeProvas(pygame.sprite.Sprite):
+    "pilha de provas empilhadas que não da para pular, precisam ser cortadas"
+
+class Bandeira(pygame.sprite.Sprite):
+    "fim da fase"
+
+
+class Animado(pygame.sprite.Sprite):
+    "sprite animado (que troca de imagem de tempos em tempos)"
+
+    def __init__(self, quadros, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.quadros = quadros
+        self.quadro_atual = 0
+        self.image = self.quadros[0]
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = (x, y)
+        self.ultimo_quadro = pygame.time.get_ticks()
+
+    def animar(self):
+        "muda de quadro se já deu o tempo"
+        agora = pygame.time.get_ticks()
+        if agora - self.ultimo_quadro > TEMPO_FRAME:
+            self.ultimo_quadro = agora
+            self.quadro_atual = (self.quadro_atual + 1) % len(self.quadros)
+            self.image = self.quadros[self.quadro_atual]
+
+    def update(self):
+        self.animar()
+
+
+class Moeda(Animado):
+    "moeda girando que da pontos"
+
+    def __init__(self, quadros, x, y):
+        Animado.__init__(self, quadros, x, y)
+        self.rect.center = (x, y)
+
+
+class Inimigo(Animado):
+    "jacaré que anda de um lado pro outro"
+
+    def __init__(self, quadors, x, y):
+        Animado.__init__(self, quadros, x, y)
+        self.x_inicial = x
+        self.distancia = distancia
+        self.velocidade = 1.5
+        self.x = float(x)
+        self.virado_esquerda = True
+
+    def update(self):
+        if self.virado_esquerda == True:
+            self.x = self.x - self.velocidade
+        else:
+            self.x = self.x + self.velocidade
+
+        if self.x < self.x_inicial - self.distancia: #chegou no limite; vira
+            self.virado_esquerda = False
+        elif self.x > self.x_inicial + self.distancia:
+            self.virado_esquerda = True
+
+        self.rect.centerx = round(self.x)
+        self.animar()
+        if not self.virado_esquerda:
+            self.image = pygame.transform.flip(self.image, True, False)
 
 
 from config import (GRAVIDADE, INTERVALO_CORTE, VEL_MAX_QUEDA, VEL_PULO, VEL_ANDAR, VEL_AGACHADO)
@@ -147,6 +223,8 @@ class Raposa(pygame.sprite.Sprite):
         golpe = Corte(self.assets["corte"], self)
         grupos["cortes"].add(golpe)
         # self.assets["som_corte"].play()
+
+
 
     
 
