@@ -1,5 +1,7 @@
 """Classes de todos os objetos do jogo (sprites)."""
 import pygame
+from config import (GRAVIDADE, INTERVALO_CORTE, VEL_MAX_QUEDA, VEL_PULO, VEL_ANDAR, VEL_AGACHADO, DURACAO_CORTE)
+
 class Bloco(pygame.sprite.Sprite):
      """Um quadradinho sólido do cenário (chão ou plataforma)."""
      def __init__(self, imagem, x, y):
@@ -15,7 +17,7 @@ from config import (GRAVIDADE, INTERVALO_CORTE, VEL_MAX_QUEDA, VEL_PULO, VEL_AND
 class Corte(pygame.sprite.Sprite):
     "o golpe de faquinha da raposa. aparece na frente da raposa e some sozinho"
 
-    def __init__(self, assets, raposa):
+    def __init__(self, imagem, raposa):
         pygame.sprite.Sprite.__init__(self)
         self.image = imagem
         self.rect = self.image.get_rect()
@@ -76,11 +78,11 @@ class Raposa(pygame.sprite.Sprite):
 
         self.vx = 0
         if teclas[pygame.K_LEFT] or teclas[pygame.K_a]:
-            self.vx = -VEL_ANDAR
+            self.vx = -velocidade
             self.direcao = -1
 
         if teclas[pygame.K_RIGHT] or teclas[pygame.K_d]:
-            self.vx = VEL_ANDAR
+            self.vx = velocidade
             self.direcao = 1
 
 
@@ -120,11 +122,11 @@ class Raposa(pygame.sprite.Sprite):
         if self.no_chao and not self.agachada:
             self.vy = VEL_PULO
             self.no_chao = False
-            self.assets["som pulo"].play()
+            # self.assets["som_pulo"].play()
 
 
-    def agachar(self, agachar):
-        if agachar == self.agachada or not self.no_chao and quer_agachar:
+    def agachar(self, quer_agachar):
+        if quer_agachar == self.agachada or not self.no_chao and quer_agachar:
             return
         base = self.rect.midbottom
         self.agachada = quer_agachar
@@ -144,7 +146,7 @@ class Raposa(pygame.sprite.Sprite):
         self.ultimo_corte = agora
         golpe = Corte(self.assets["corte"], self)
         grupos["cortes"].add(golpe)
-        self.assets["som corte"].play()
+        # self.assets["som_corte"].play()
 
     
 

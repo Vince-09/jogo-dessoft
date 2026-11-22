@@ -28,7 +28,7 @@ def game_screen(janela, assets):
 
             if evento.type == pygame.KEYDOWN:
                 if evento.key in [pygame.K_UP, pygame.K_w, pygame.K_SPACE]:
-                    raposa.pular(True)
+                    raposa.pular()
                 if evento.key in [pygame.K_x, pygame.K_k, pygame.K_c]:
                     raposa.cortar(grupos)
 
