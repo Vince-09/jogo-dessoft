@@ -21,10 +21,10 @@ class Obstaculo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
 
-class PilhaDeProvas(obstaculo):
+class PilhaDeProvas(Obstaculo):
     "pilha de provas empilhadas que não da para pular, precisam ser cortadas"
 
-class Bandeira(obstaculo):
+class Bandeira(Obstaculo):
     "fim da fase"
 
 
@@ -227,7 +227,7 @@ class Raposa(pygame.sprite.Sprite):
         """Fica invencível por um tempo e dá um pulinho.""" 
         self.invencivel_ate = pygame.time.get_ticks() + TEMPO_INVENCIVEL 
         self.vy = -8
-        self.assets['som_dano'].play()
+        #self.assets['som_dano'].play()
     def esta_invencivel(self):
         return pygame.time.get_ticks() < self.invencivel_ate
     

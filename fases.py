@@ -18,7 +18,21 @@ FASE_1 = [
     'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT..TTTTTTTTTTTTTTTTTTTTTTTTTT',
 ]
 
-FASES = [FASE_1]
+FASE_2 = [
+    '......................................................................',
+    '......................................................................',
+    '......................................................................',
+    '......................................................................',
+    '......................................................................',
+    '....MM................................................................',
+    '...BBBB.................MM.....................MM.....................',
+    '.....................................................MM...............',
+    '......................................................................',
+    '.J.......I...A....E...C....M.A.A...I...E..C.......I.....E.M.C..I...A.F',
+    'GGGGGGGGGGGGGGGGGGGGGGGG..GGGGGGGGGGGGGGGGGGGG...GGGGGGGGGGGGGGGGGGGGG',
+    'TTTTTTTTTTTTTTTTTTTTTTTT..TTTTTTTTTTTTTTTTTTTT...TTTTTTTTTTTTTTTTTTTTT',
+]
+FASES = [FASE_1, FASE_2]
 
 
 def construir_fase(mapa, assets):
@@ -53,11 +67,11 @@ def construir_fase(mapa, assets):
                 grupos['blocos'].add(novo)
                 grupos['todos'].add(novo)
             elif letra == "E":
-                novo = Obstaculo(assets["espinho"], x + TAM_BLOCO // 2, chao_do_bloco)
+                novo = Obstaculo(assets["espinhos"], x + TAM_BLOCO // 2, chao_do_bloco)
                 grupos["perigos"].add(novo)
                 grupos["todos"].add(novo)
             elif letra == "A":
-                if linha == 0 or mapa[coluna][linha-1] != "A":
+                if linha == 0 or mapa[linha - 1][coluna] != "A":
                     novo = Obstaculo(assets["galho"], x + TAM_BLOCO // 2, 360)
                     grupos["perigos"].add(novo)
                     grupos["todos"].add(novo)
