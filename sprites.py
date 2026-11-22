@@ -1,6 +1,6 @@
 """Classes de todos os objetos do jogo (sprites)."""
 import pygame
-from config import (GRAVIDADE, INTERVALO_CORTE, TEMPO_FRAME, VEL_MAX_QUEDA, VEL_PULO, VEL_ANDAR, VEL_AGACHADO, DURACAO_CORTE)
+from config import (GRAVIDADE, INTERVALO_CORTE, TEMPO_FRAME, TEMPO_INVENCIVEL, VEL_MAX_QUEDA, VEL_PULO, VEL_ANDAR, VEL_AGACHADO, DURACAO_CORTE)
 
 class Bloco(pygame.sprite.Sprite):
      """Um quadradinho sólido do cenário (chão ou plataforma)."""
@@ -21,10 +21,10 @@ class Obstaculo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
 
-class PilhaDeProvas(pygame.sprite.Sprite):
+class PilhaDeProvas(obstaculo):
     "pilha de provas empilhadas que não da para pular, precisam ser cortadas"
 
-class Bandeira(pygame.sprite.Sprite):
+class Bandeira(obstaculo):
     "fim da fase"
 
 
@@ -63,7 +63,7 @@ class Moeda(Animado):
 class Inimigo(Animado):
     "jacaré que anda de um lado pro outro"
 
-    def __init__(self, quadors, x, y):
+    def __init__(self, quadros, x, y,distancia=60):
         Animado.__init__(self, quadros, x, y)
         self.x_inicial = x
         self.distancia = distancia
@@ -223,6 +223,14 @@ class Raposa(pygame.sprite.Sprite):
         golpe = Corte(self.assets["corte"], self)
         grupos["cortes"].add(golpe)
         # self.assets["som_corte"].play()
+    def levar_dano(self):
+        """Fica invencível por um tempo e dá um pulinho.""" 
+        self.invencivel_ate = pygame.time.get_ticks() + TEMPO_INVENCIVEL 
+        self.vy = -8
+        self.assets['som_dano'].play()
+    def esta_invencivel(self):
+        return pygame.time.get_ticks() < self.invencivel_ate
+    
 
 
 
