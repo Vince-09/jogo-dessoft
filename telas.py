@@ -80,11 +80,11 @@ def tela_fim(janela, assets, venceu, pontos, tempo_ms):
     if venceu:
         titulo = 'Você venceu!'
         melhores, posicao = registrar_tempo(tempo_ms)
-        # assets['som_vitoria'].play()     # liga na Etapa 10
+        assets['som_vitoria'].play()     # liga na Etapa 10
     else:
         titulo = 'Game Over'
         melhores, posicao = [], -1
-        # assets['som_game_over'].play()   # liga na Etapa 10
+        assets['som_game_over'].play()   # liga na Etapa 10
 
     def desenhar(janela):
         escrever(janela, assets['fonte_grande'], titulo, AMARELO, (LARGURA // 2, 80))

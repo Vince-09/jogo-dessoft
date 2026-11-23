@@ -202,7 +202,7 @@ class Raposa(pygame.sprite.Sprite):
         if self.no_chao and not self.agachada:
             self.vy = VEL_PULO
             self.no_chao = False
-            # self.assets["som_pulo"].play()
+            self.assets["som_pulo"].play()
 
 
     def agachar(self, quer_agachar):
@@ -226,12 +226,12 @@ class Raposa(pygame.sprite.Sprite):
         self.ultimo_corte = agora
         golpe = Corte(self.assets["corte"], self)
         grupos["cortes"].add(golpe)
-        # self.assets["som_corte"].play()
+        self.assets["som_corte"].play()
     def levar_dano(self):
         """Fica invencível por um tempo e dá um pulinho.""" 
         self.invencivel_ate = pygame.time.get_ticks() + TEMPO_INVENCIVEL 
         self.vy = -8
-        #self.assets['som_dano'].play()
+        self.assets['som_dano'].play()
     def esta_invencivel(self):
         return pygame.time.get_ticks() < self.invencivel_ate
 
@@ -239,10 +239,10 @@ class Raposa(pygame.sprite.Sprite):
     def escolher_estado(self):
         "decide qual animação mostrar de acordo com o que esta acontecendo"
 
-        if self.esta_invencivel and pygame.time.get_ticks() < self.invencivel_ate - TEMPO_INVENCIVEL + 300:
+        if self.esta_invencivel() and pygame.time.get_ticks() < self.invencivel_ate - TEMPO_INVENCIVEL + 300:
             return "dano"
         if self.agachada:
-            return "agachada"
+            return "agachado"
         if not self.no_chao:
             return "pulando"
         if self.vx != 0:

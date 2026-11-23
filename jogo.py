@@ -8,7 +8,7 @@ from game_screen import game_screen
 # ----- Inicialização -----
 pygame.init()
 pygame.mixer.init()
-janela = pygame.display.set_mode((LARGURA, ALTURA))
+janela = pygame.display.set_mode((LARGURA, ALTURA), pygame.SCALED | pygame.FULLSCREEN)
 pygame.display.set_caption(TITULO)
 assets = load_assets()
 

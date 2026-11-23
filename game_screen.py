@@ -39,9 +39,9 @@ def game_screen(janela, assets):
     indice_fase = 0
     tempo_ms = 0
 
-    # pygame.mixer.music.load('assets/snd/musica.wav')   # Etapa 10
-    # pygame.mixer.music.set_volume(0.3)
-    # pygame.mixer.music.play(-1)
+    pygame.mixer.music.load('assets/snd/musica.wav')   # Etapa 10
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)
 
     while indice_fase < len(FASES):
         # ---------- Monta a fase ----------
@@ -61,9 +61,11 @@ def game_screen(janela, assets):
             # 1) Trata eventos
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
                     return SAIR, pontos, tempo_ms
                 if evento.type == pygame.KEYDOWN:
                     if evento.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.stop()
                         return SAIR, pontos, tempo_ms
                     if evento.key == pygame.K_p:
                         pausado = not pausado
@@ -104,6 +106,7 @@ def game_screen(janela, assets):
             moedas_pegas = pygame.sprite.spritecollide(raposa, grupos['moedas'], True)
             if len(moedas_pegas) > 0:
                 pontos += PONTOS_MOEDA * len(moedas_pegas)
+                assets['som_moeda'].play()
 
             # Perigos (espinhos, galho, jacaré)
             if not raposa.esta_invencivel():
@@ -114,10 +117,12 @@ def game_screen(janela, assets):
             # Caiu num buraco: perde uma vida e volta para o começo da fase
             if raposa.rect.top > ALTURA:
                 vidas -= 1
+                assets['som_dano'].play()
                 raposa = Raposa(assets, inicio[0], inicio[1])
                 raposa.invencivel_ate = pygame.time.get_ticks() + TEMPO_INVENCIVEL
 
             if vidas <= 0:
+                pygame.mixer.music.stop()
                 return GAME_OVER, pontos, tempo_ms
 
             if len(pygame.sprite.spritecollide(raposa, grupos['bandeira'], False)) > 0:
@@ -132,12 +137,11 @@ def game_screen(janela, assets):
             # Invencível: a raposa pisca
             if not raposa.esta_invencivel() or (pygame.time.get_ticks() // 100) % 2 == 0:
                 janela.blit(raposa.image, camera.posicao_na_tela(raposa))
-                desenhar_hud(janela, assets, vidas, pontos, indice_fase + 1, tempo_ms)
+            desenhar_hud(janela, assets, vidas, pontos, indice_fase + 1, tempo_ms)
             pygame.display.update()
-
         # Saiu do loop da fase: vai para a próxima
         indice_fase += 1
-
+    pygame.mixer.music.stop()
     return VITORIA, pontos, tempo_ms
 
             

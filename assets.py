@@ -61,7 +61,16 @@ def load_assets():
     assets['fundo'] = carregar_imagem('fundo.png', (800, 480))
     assets['predios'] = carregar_imagem('predios.png', (800, 480))
 
-    # Os sons entram na Etapa 10. As fontes, já:
+    
+    # Sons
+    assets['som_pulo'] = carregar_som('pulo.wav', 0.4)
+    assets['som_corte'] = carregar_som('corte.wav', 0.5)
+    assets['som_moeda'] = carregar_som('moeda.wav', 0.4)
+    assets['som_dano'] = carregar_som('dano.wav', 0.8)
+    assets['som_vitoria'] = carregar_som('vitoria.wav', 0.6)
+    assets['som_game_over'] = carregar_som('game_over.wav', 0.6)
+
+
     assets['fonte_grande'] = pygame.font.Font(None, 72)
     assets['fonte_media'] = pygame.font.Font(None, 40)
     assets['fonte_pequena'] = pygame.font.Font(None, 28)
