@@ -142,6 +142,10 @@ class Raposa(pygame.sprite.Sprite):
         self.ultimo_corte = -INTERVALO_CORTE
         self.invencivel_ate = 0
 
+        self.estado = "parado"
+        self.quadro_atual = 0
+        self.ultimo_quadro = pygame.time.get_ticks()
+
 
 
     def ler_teclado(self, teclas):
@@ -230,7 +234,42 @@ class Raposa(pygame.sprite.Sprite):
         #self.assets['som_dano'].play()
     def esta_invencivel(self):
         return pygame.time.get_ticks() < self.invencivel_ate
-    
+
+
+    def escolher_estado(self):
+        "decide qual animação mostrar de acordo com o que esta acontecendo"
+
+        if self.esta_invencivel and pygame.time.get_ticks() < self.invencivel_ate - TEMPO_INVENCIVEL + 300:
+            return "dano"
+        if self.agachada:
+            return "agachada"
+        if not self.no_chao:
+            return "pulando"
+        if self.vx != 0:
+            return "andando"
+        return "parado"
+
+    def animar(self):
+        novo_estado = self.escolher_estado()
+        if novo_estado != self.estado:
+            self.estado = novo_estado
+            self.quadro_atual = 0
+        quadros = self.animacoes[self.estado]
+
+        agora = pygame.time.get_ticks()
+        if agora - self.ultimo_quadro > TEMPO_FRAME:
+            self.ultimo_quadro = agora
+            self.quadro_atual = (self.quadro_atual + 1) % len(quadros)
+
+        imagem = quadros[self.quadro_atual % len(quadros)]
+        if self.direcao == -1:
+            imagem = pygame.transform.flip(imagem, True, False)
+        self.image = imagem
+
+
+    def update(self, blocos):
+        self.mover(blocos)
+        self.animar()
 
 
 
