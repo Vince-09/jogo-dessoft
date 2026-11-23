@@ -13,8 +13,14 @@ def desenhar_cenario(janela, assets, camera):
     janela.blit(assets['predios'], (x - LARGURA, 0))
     janela.blit(assets['predios'], (x, 0))
 
+def formatar_tempo(tempo_ms):
+    """Transforma milissegundos em texto."""
+    segundos = tempo_ms / 1000
+    minutos = int(segundos // 60)
+    resto = segundos - minutos * 60
+    return f'{minutos}:{resto:04.1f}'
 
-def desenhar_hud(janela, assets, vidas, pontos, numero_fase):
+def desenhar_hud(janela, assets, vidas, pontos, numero_fase, tempo_ms):
     """Desenha vidas, pontos e fase no topo da tela."""
     for i in range(vidas):
         janela.blit(assets['coracao'], (10 + i * 30, 10))
@@ -22,7 +28,8 @@ def desenhar_hud(janela, assets, vidas, pontos, numero_fase):
     janela.blit(texto, (LARGURA - 170, 12))
     texto = assets['fonte_pequena'].render(f'Fase {numero_fase}', True, PRETO)
     janela.blit(texto, (LARGURA // 2 - 30, 12))
-
+    texto = assets['fonte_pequena'].render(f'Tempo: {formatar_tempo(tempo_ms)}', True, PRETO)
+    janela.blit(texto, (LARGURA - 170, 40))
 
 def game_screen(janela, assets):
     """Roda todas as fases. Devolve (próximo_estado, pontos)."""
@@ -30,6 +37,7 @@ def game_screen(janela, assets):
     vidas = VIDAS_INICIAIS
     pontos = 0
     indice_fase = 0
+    tempo_ms = 0
 
     # pygame.mixer.music.load('assets/snd/musica.wav')   # Etapa 10
     # pygame.mixer.music.set_volume(0.3)
@@ -46,15 +54,17 @@ def game_screen(janela, assets):
 
         # ---------- Loop da fase ----------
         while not terminou_fase:
-            relogio.tick(FPS)
+            dt = relogio.tick(FPS)
+            if not pausado:
+                tempo_ms += dt
 
             # 1) Trata eventos
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
-                    return SAIR, pontos
+                    return SAIR, pontos, tempo_ms
                 if evento.type == pygame.KEYDOWN:
                     if evento.key == pygame.K_ESCAPE:
-                        return SAIR, pontos
+                        return SAIR, pontos, tempo_ms
                     if evento.key == pygame.K_p:
                         pausado = not pausado
                     if not pausado:
@@ -108,7 +118,7 @@ def game_screen(janela, assets):
                 raposa.invencivel_ate = pygame.time.get_ticks() + TEMPO_INVENCIVEL
 
             if vidas <= 0:
-                return GAME_OVER, pontos
+                return GAME_OVER, pontos, tempo_ms
 
             if len(pygame.sprite.spritecollide(raposa, grupos['bandeira'], False)) > 0:
                 terminou_fase = True
@@ -122,13 +132,13 @@ def game_screen(janela, assets):
             # Invencível: a raposa pisca
             if not raposa.esta_invencivel() or (pygame.time.get_ticks() // 100) % 2 == 0:
                 janela.blit(raposa.image, camera.posicao_na_tela(raposa))
-            desenhar_hud(janela, assets, vidas, pontos, indice_fase + 1)
+                desenhar_hud(janela, assets, vidas, pontos, indice_fase + 1, tempo_ms)
             pygame.display.update()
 
         # Saiu do loop da fase: vai para a próxima
         indice_fase += 1
 
-    return VITORIA, pontos
+    return VITORIA, pontos, tempo_ms
 
             
 

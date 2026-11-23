@@ -35,3 +35,4 @@ JOGANDO = 3
 GAME_OVER = 4
 VITORIA = 5
 ARQUIVO_RECORDE = 'recorde.txt'
+ARQUIVO_TEMPOS = 'tempos.txt'
